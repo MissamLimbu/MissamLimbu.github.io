@@ -33,7 +33,7 @@
   <main id="main">
     <section class="hero" id="top">
       <div class="hero-copy">
-        <h1>Turning ideas into practical technology that <span>people can rely on.</span></h1>
+        <h1 class="fold-text" data-fold-text>Turning ideas into practical technology that <span class="hero-accent">people can rely on.</span></h1>
         <div class="hero-actions">
           <a class="button button-primary" href="#work">See my work</a>
           <a class="button button-secondary" href="mailto:missamlimbu136@gmail.com">Email me</a>
@@ -115,6 +115,56 @@
     let wheelIntentTimer;
     let wheelLocked = false;
     let wheelUnlockTimer;
+
+    const prepareFoldText = () => {
+      const title = document.querySelector("[data-fold-text]");
+      if (!title) return;
+
+      const accessibleText = title.textContent.replace(/\s+/g, " ").trim();
+      const visual = document.createElement("span");
+      visual.className = "fold-text-visual";
+      visual.setAttribute("aria-hidden", "true");
+
+      while (title.firstChild) visual.appendChild(title.firstChild);
+      title.appendChild(visual);
+      title.setAttribute("aria-label", accessibleText);
+
+      const textNodes = [];
+      const walker = document.createTreeWalker(visual, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+      let wordIndex = 0;
+      textNodes.forEach(textNode => {
+        const fragment = document.createDocumentFragment();
+        textNode.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) {
+            fragment.appendChild(document.createTextNode(part));
+            return;
+          }
+
+          const segment = document.createElement("span");
+          const piece = document.createElement("span");
+          segment.className = "fold-text-segment";
+          piece.className = "fold-text-piece";
+          piece.style.setProperty("--fold-index", wordIndex);
+          piece.textContent = part;
+          segment.appendChild(piece);
+          fragment.appendChild(segment);
+          wordIndex += 1;
+        });
+        textNode.replaceWith(fragment);
+      });
+
+      const pieces = [...title.querySelectorAll(".fold-text-piece")];
+      if (!pieces.length) return;
+
+      title.classList.add("is-folding");
+      pieces.at(-1).addEventListener("animationend", () => {
+        title.classList.remove("is-folding");
+        title.classList.add("is-folded");
+      }, { once: true });
+    };
 
     const closestSectionIndex = () => {
       const headerHeight = header.offsetHeight;
@@ -233,6 +283,7 @@
     addEventListener("wheel", handlePageWheel, { passive: false });
     addEventListener("scrollend", unlockWheel);
     updateHeaderBackground();
+    document.fonts.ready.then(() => requestAnimationFrame(prepareFoldText));
     document.fonts.ready.then(requestHeaderUpdate);
   </script>
 </body>
