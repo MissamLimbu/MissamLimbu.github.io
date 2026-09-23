@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Pixelion";
+  src: url("font%20files/WOFF2/Pixelion-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --ink: #17202f;
   --paper: #f2f5f4;
@@ -109,10 +117,17 @@ p {
   margin-top: 0;
 }
 
+h1,
+h2,
+h3,
+.logo {
+  font-family: "Pixelion", "Plus Jakarta Sans", sans-serif;
+}
+
 h1 {
   max-width: 850px;
   margin-bottom: 28px;
-  font-size: clamp(3.2rem, 7.3vw, 6.6rem);
+  font-size: clamp(4rem, 8vw, 7.25rem);
   font-weight: 800;
   letter-spacing: -0.07em;
   line-height: 0.96;
@@ -214,7 +229,7 @@ h1 span {
 .section-heading h2,
 .contact-section h2 {
   margin-bottom: 0;
-  font-size: clamp(2.25rem, 5vw, 4.8rem);
+  font-size: clamp(3rem, 6vw, 5.8rem);
   letter-spacing: -0.055em;
   line-height: 1;
 }
@@ -256,7 +271,7 @@ h1 span {
 
 .project-info h3 {
   margin-bottom: 4px;
-  font-size: 1.35rem;
+  font-size: 1.65rem;
 }
 
 .project-info p,
@@ -370,7 +385,7 @@ h1 span {
 .about-section h2 {
   max-width: 850px;
   margin-bottom: 28px;
-  font-size: clamp(2rem, 4vw, 3.75rem);
+  font-size: clamp(2.6rem, 4.8vw, 4.5rem);
   letter-spacing: -0.05em;
   line-height: 1.12;
   text-wrap: balance;
@@ -505,7 +520,7 @@ footer p {
   }
 
   h1 {
-    font-size: 3rem;
+    font-size: 4rem;
   }
 
   .hero-actions,
