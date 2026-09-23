@@ -716,14 +716,20 @@ footer p {
   }
 
   .hero {
+    --mobile-cloud-gap: 36px;
+    --mobile-cloud-height: 120px;
+    --mobile-cloud-top: 12px;
+
+    align-items: start;
     min-height: calc(100svh - 88px);
-    padding-block: 70px 80px;
+    padding-top: calc(var(--mobile-cloud-top) + var(--mobile-cloud-height) + var(--mobile-cloud-gap));
+    padding-bottom: 64px;
     padding-inline: 16px;
   }
 
   .hero::before {
-    top: 12px;
-    height: 120px;
+    top: var(--mobile-cloud-top);
+    height: var(--mobile-cloud-height);
   }
 
   .section-heading,
