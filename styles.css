@@ -17,6 +17,7 @@
   --line: #cad0ce;
   --muted: #5d6673;
   --radius: 24px;
+  --footer-height: 108px;
 }
 
 * {
@@ -143,8 +144,7 @@ footer a:focus-visible {
   animation: cloud-drift 90s linear infinite;
 }
 
-main > section,
-footer {
+main > section {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -426,7 +426,7 @@ h1 span {
 
 .contact-section {
   display: flex;
-  min-height: calc(100svh - 106px);
+  min-height: calc(100svh - 104px - var(--footer-height));
   flex-direction: column;
   justify-content: center;
   padding: clamp(55px, 8vw, 100px);
@@ -454,6 +454,8 @@ h1 span {
 
 footer {
   display: flex;
+  min-height: var(--footer-height);
+  align-items: center;
   justify-content: space-between;
   padding-block: 42px;
   color: var(--muted);
@@ -593,6 +595,7 @@ footer p {
   }
 
   .contact-section {
+    min-height: calc(100svh - 88px - var(--footer-height));
     border-radius: 24px;
   }
 }
