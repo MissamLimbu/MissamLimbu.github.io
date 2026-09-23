@@ -31,7 +31,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 16px;
   letter-spacing: 0.015em;
   line-height: 1.6;
@@ -125,7 +125,7 @@ h1,
 h2,
 h3,
 .logo {
-  font-family: "Pixelion", "Plus Jakarta Sans", sans-serif;
+  font-family: "Pixelion", "IBM Plex Mono", monospace;
   font-weight: 400;
   letter-spacing: 0.04em;
 }
