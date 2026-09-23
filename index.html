@@ -35,8 +35,8 @@
       <div class="hero-copy">
         <h1 class="fold-text" data-fold-text>Turning ideas into practical technology that <span class="hero-accent">people can rely on.</span></h1>
         <div class="hero-actions">
-          <a class="button button-primary" href="#work">See my work</a>
-          <a class="button button-secondary" href="mailto:missamlimbu136@gmail.com">Email me</a>
+          <a class="button button-primary fold-text" href="#work" data-fold-text>See my work</a>
+          <a class="button button-secondary fold-text" href="mailto:missamlimbu136@gmail.com" data-fold-text>Email me</a>
         </div>
       </div>
     </section>
@@ -119,86 +119,78 @@
     let wheelUnlockTimer;
 
     const prepareFoldText = () => {
-      const title = document.querySelector("[data-fold-text]");
-      if (!title || !window.gsap || !window.ScrollTrigger) return;
-
-      const accessibleText = title.textContent.replace(/\s+/g, " ").trim();
-      const visual = document.createElement("span");
-      visual.className = "fold-text-visual";
-      visual.setAttribute("aria-hidden", "true");
-
-      while (title.firstChild) visual.appendChild(title.firstChild);
-      title.appendChild(visual);
-      title.setAttribute("aria-label", accessibleText);
-
-      const textNodes = [];
-      const walker = document.createTreeWalker(visual, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) textNodes.push(walker.currentNode);
-
-      let characterIndex = 0;
-      textNodes.forEach(textNode => {
-        const fragment = document.createDocumentFragment();
-        textNode.textContent.split(/(\s+)/).forEach(part => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) {
-            fragment.appendChild(document.createTextNode(part));
-            characterIndex += part.length;
-            return;
-          }
-
-          const word = document.createElement("span");
-          word.className = "fold-text-word";
-
-          Array.from(part).forEach(character => {
-            const segment = document.createElement("span");
-            const piece = document.createElement("span");
-            segment.className = "fold-text-segment";
-            piece.className = "fold-text-piece";
-            piece.dataset.foldIndex = characterIndex;
-            piece.textContent = character;
-            segment.appendChild(piece);
-            word.appendChild(segment);
-            characterIndex += 1;
-          });
-
-          fragment.appendChild(word);
-        });
-        textNode.replaceWith(fragment);
-      });
-
-      const pieces = [...title.querySelectorAll(".fold-text-piece")];
-      if (!pieces.length) return;
-
-      const reduceMotion = reducedMotionQuery.matches;
-      const duration = reduceMotion ? 0.22 : 0.65;
-      const stagger = reduceMotion ? 0.02 : 0.045;
-      const fromVars = {
-        opacity: 0,
-        rotateX: reduceMotion ? 0 : -92,
-        "--fold-crease": reduceMotion ? 0 : 0.55,
-        transformOrigin: "50% 0%",
-        force3D: true,
-        willChange: "transform, opacity"
-      };
-
+      const targets = [...document.querySelectorAll("[data-fold-text]")];
+      if (!targets.length || !window.gsap || !window.ScrollTrigger) return;
       gsap.registerPlugin(ScrollTrigger);
-      gsap.set(pieces, fromVars);
 
-      ScrollTrigger.create({
-        trigger: title,
-        start: "top 82%",
-        once: true,
-        onEnter: () => {
-          gsap.to(pieces, {
-            opacity: 1,
-            rotateX: 0,
-            "--fold-crease": 0,
-            duration,
-            ease: reduceMotion ? "power1.out" : "power3.out",
-            stagger,
-            clearProps: "willChange"
+      targets.forEach(target => {
+        const accessibleText = target.textContent.replace(/\s+/g, " ").trim();
+        const visual = document.createElement("span");
+        visual.className = "fold-text-visual";
+        visual.setAttribute("aria-hidden", "true");
+
+        while (target.firstChild) visual.appendChild(target.firstChild);
+        target.appendChild(visual);
+        target.setAttribute("aria-label", accessibleText);
+
+        const textNodes = [];
+        const walker = document.createTreeWalker(visual, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+        textNodes.forEach(textNode => {
+          const fragment = document.createDocumentFragment();
+          textNode.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) {
+              fragment.appendChild(document.createTextNode(part));
+              return;
+            }
+
+            const word = document.createElement("span");
+            word.className = "fold-text-word";
+
+            Array.from(part).forEach(character => {
+              const segment = document.createElement("span");
+              const piece = document.createElement("span");
+              segment.className = "fold-text-segment";
+              piece.className = "fold-text-piece";
+              piece.textContent = character;
+              segment.appendChild(piece);
+              word.appendChild(segment);
+            });
+
+            fragment.appendChild(word);
           });
-        }
+          textNode.replaceWith(fragment);
+        });
+
+        const pieces = [...target.querySelectorAll(".fold-text-piece")];
+        if (!pieces.length) return;
+
+        const reduceMotion = reducedMotionQuery.matches;
+        gsap.set(pieces, {
+          opacity: 0,
+          rotateX: reduceMotion ? 0 : -92,
+          transformOrigin: "50% 0%",
+          force3D: true,
+          willChange: "transform, opacity"
+        });
+
+        ScrollTrigger.create({
+          trigger: target,
+          start: "top 82%",
+          once: true,
+          onEnter: () => {
+            gsap.to(pieces, {
+              opacity: 1,
+              rotateX: 0,
+              duration: reduceMotion ? 0.22 : 0.65,
+              ease: reduceMotion ? "power1.out" : "power3.out",
+              stagger: reduceMotion ? 0.02 : 0.045,
+              clearProps: "willChange"
+            });
+          }
+        });
       });
     };
 
