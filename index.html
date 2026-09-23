@@ -16,10 +16,17 @@
 
   <header class="site-header">
     <a class="logo" href="#top" aria-label="Missam Limbu, home">ML</a>
-    <nav aria-label="Main navigation">
-      <a href="#work">Work</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
+    <nav class="cloud-nav" aria-label="Main navigation">
+      <span class="cloud-nav-indicator" aria-hidden="true">
+        <span class="cloud-nav-base"></span>
+        <span class="cloud-nav-lobe cloud-nav-lobe-left"></span>
+        <span class="cloud-nav-lobe cloud-nav-lobe-middle"></span>
+        <span class="cloud-nav-lobe cloud-nav-lobe-right"></span>
+      </span>
+      <span class="cloud-nav-particles" aria-hidden="true"></span>
+      <a href="#work" data-section="work">Work</a>
+      <a href="#about" data-section="about">About me</a>
+      <a href="#contact" data-section="contact">Contact</a>
     </nav>
   </header>
 
@@ -109,24 +116,18 @@
     const header = document.querySelector(".site-header");
     const hero = document.querySelector(".hero");
     const pageSections = [...document.querySelectorAll("main > section")];
+    const cloudNav = document.querySelector(".cloud-nav");
+    const cloudNavLinks = [...cloudNav.querySelectorAll("a[data-section]")];
+    const cloudIndicator = cloudNav.querySelector(".cloud-nav-indicator");
+    const cloudParticleLayer = cloudNav.querySelector(".cloud-nav-particles");
     const smoothPageQuery = matchMedia("(min-width: 761px) and (prefers-reduced-motion: no-preference)");
+    const reducedMotionQuery = matchMedia("(prefers-reduced-motion: reduce)");
     let headerUpdatePending = false;
+    let activeNavSection = null;
     let wheelIntent = 0;
     let wheelIntentTimer;
     let wheelLocked = false;
     let wheelUnlockTimer;
-
-    const updateHeaderBackground = () => {
-      const heroHasClearedHeader = hero.getBoundingClientRect().bottom <= header.offsetHeight;
-      header.classList.toggle("is-over-content", heroHasClearedHeader);
-      headerUpdatePending = false;
-    };
-
-    const requestHeaderUpdate = () => {
-      if (headerUpdatePending) return;
-      headerUpdatePending = true;
-      requestAnimationFrame(updateHeaderBackground);
-    };
 
     const closestSectionIndex = () => {
       const headerHeight = header.offsetHeight;
@@ -134,6 +135,81 @@
         const distance = Math.abs(section.getBoundingClientRect().top - headerHeight);
         return distance < closest.distance ? { index, distance } : closest;
       }, { index: 0, distance: Infinity }).index;
+    };
+
+    const positionCloudIndicator = link => {
+      const navRect = cloudNav.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const x = linkRect.left - navRect.left + (linkRect.width - cloudIndicator.offsetWidth) / 2;
+      cloudIndicator.style.transform = `translate3d(${x}px, -50%, 0) scale(1)`;
+    };
+
+    const releaseCloudPuffs = link => {
+      if (reducedMotionQuery.matches) return;
+
+      cloudParticleLayer.replaceChildren();
+      const navRect = cloudNav.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const originX = linkRect.left - navRect.left + linkRect.width / 2;
+      const paths = [
+        [-30, -4, -42, -18, 11, 0],
+        [-15, -10, -22, -28, 14, 35],
+        [2, -13, 5, -34, 12, 65],
+        [19, -9, 28, -27, 15, 25],
+        [32, -3, 45, -16, 10, 75]
+      ];
+
+      paths.forEach(([fromX, fromY, toX, toY, size, delay]) => {
+        const puff = document.createElement("span");
+        puff.className = "cloud-nav-particle";
+        puff.style.left = `${originX}px`;
+        puff.style.setProperty("--from-x", `${fromX}px`);
+        puff.style.setProperty("--from-y", `${fromY}px`);
+        puff.style.setProperty("--to-x", `${toX}px`);
+        puff.style.setProperty("--to-y", `${toY}px`);
+        puff.style.setProperty("--puff-size", `${size}px`);
+        puff.style.animationDelay = `${delay}ms`;
+        cloudParticleLayer.appendChild(puff);
+        puff.addEventListener("animationend", () => puff.remove(), { once: true });
+      });
+    };
+
+    const setActiveNavSection = sectionId => {
+      const nextLink = cloudNavLinks.find(link => link.dataset.section === sectionId);
+      const hasChanged = activeNavSection !== sectionId;
+      activeNavSection = sectionId;
+
+      cloudNavLinks.forEach(link => {
+        if (link === nextLink) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+
+      if (!nextLink) {
+        cloudIndicator.classList.remove("is-visible");
+        cloudParticleLayer.replaceChildren();
+        return;
+      }
+
+      positionCloudIndicator(nextLink);
+      cloudIndicator.classList.add("is-visible");
+      if (hasChanged) releaseCloudPuffs(nextLink);
+    };
+
+    const updateHeaderBackground = () => {
+      const heroHasClearedHeader = hero.getBoundingClientRect().bottom <= header.offsetHeight;
+      const currentSection = pageSections[closestSectionIndex()];
+      header.classList.toggle("is-over-content", heroHasClearedHeader);
+      setActiveNavSection(currentSection.id === "top" ? null : currentSection.id);
+      headerUpdatePending = false;
+    };
+
+    const requestHeaderUpdate = () => {
+      if (headerUpdatePending) return;
+      headerUpdatePending = true;
+      requestAnimationFrame(updateHeaderBackground);
     };
 
     const unlockWheel = () => {
@@ -170,6 +246,7 @@
     addEventListener("wheel", handlePageWheel, { passive: false });
     addEventListener("scrollend", unlockWheel);
     updateHeaderBackground();
+    document.fonts.ready.then(requestHeaderUpdate);
   </script>
 </body>
 </html>
