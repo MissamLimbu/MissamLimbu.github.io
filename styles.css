@@ -486,18 +486,18 @@ footer p {
 @keyframes section-scroll-fade {
   0% {
     opacity: 0;
-    transform: translate3d(0, 26px, 0);
+    transform: translate3d(0, 42px, 0) scale(0.985);
   }
 
-  18%,
-  82% {
+  20%,
+  86% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
   100% {
     opacity: 0;
-    transform: translate3d(0, -26px, 0);
+    transform: translate3d(0, -34px, 0) scale(0.99);
   }
 }
 
