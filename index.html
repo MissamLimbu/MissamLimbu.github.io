@@ -99,6 +99,8 @@
     <a href="#top">Back to top</a>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
   <script>
     const header = document.querySelector(".site-header");
     const hero = document.querySelector(".hero");
@@ -118,7 +120,7 @@
 
     const prepareFoldText = () => {
       const title = document.querySelector("[data-fold-text]");
-      if (!title) return;
+      if (!title || !window.gsap || !window.ScrollTrigger) return;
 
       const accessibleText = title.textContent.replace(/\s+/g, " ").trim();
       const visual = document.createElement("span");
@@ -133,25 +135,33 @@
       const walker = document.createTreeWalker(visual, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) textNodes.push(walker.currentNode);
 
-      let wordIndex = 0;
+      let characterIndex = 0;
       textNodes.forEach(textNode => {
         const fragment = document.createDocumentFragment();
         textNode.textContent.split(/(\s+)/).forEach(part => {
           if (!part) return;
           if (/^\s+$/.test(part)) {
             fragment.appendChild(document.createTextNode(part));
+            characterIndex += part.length;
             return;
           }
 
-          const segment = document.createElement("span");
-          const piece = document.createElement("span");
-          segment.className = "fold-text-segment";
-          piece.className = "fold-text-piece";
-          piece.style.setProperty("--fold-index", wordIndex);
-          piece.textContent = part;
-          segment.appendChild(piece);
-          fragment.appendChild(segment);
-          wordIndex += 1;
+          const word = document.createElement("span");
+          word.className = "fold-text-word";
+
+          Array.from(part).forEach(character => {
+            const segment = document.createElement("span");
+            const piece = document.createElement("span");
+            segment.className = "fold-text-segment";
+            piece.className = "fold-text-piece";
+            piece.dataset.foldIndex = characterIndex;
+            piece.textContent = character;
+            segment.appendChild(piece);
+            word.appendChild(segment);
+            characterIndex += 1;
+          });
+
+          fragment.appendChild(word);
         });
         textNode.replaceWith(fragment);
       });
@@ -159,11 +169,37 @@
       const pieces = [...title.querySelectorAll(".fold-text-piece")];
       if (!pieces.length) return;
 
-      title.classList.add("is-folding");
-      pieces.at(-1).addEventListener("animationend", () => {
-        title.classList.remove("is-folding");
-        title.classList.add("is-folded");
-      }, { once: true });
+      const reduceMotion = reducedMotionQuery.matches;
+      const duration = reduceMotion ? 0.22 : 0.65;
+      const stagger = reduceMotion ? 0.02 : 0.045;
+      const fromVars = {
+        opacity: 0,
+        rotateX: reduceMotion ? 0 : -92,
+        "--fold-crease": reduceMotion ? 0 : 0.55,
+        transformOrigin: "50% 0%",
+        force3D: true,
+        willChange: "transform, opacity"
+      };
+
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.set(pieces, fromVars);
+
+      ScrollTrigger.create({
+        trigger: title,
+        start: "top 82%",
+        once: true,
+        onEnter: () => {
+          gsap.to(pieces, {
+            opacity: 1,
+            rotateX: 0,
+            "--fold-crease": 0,
+            duration,
+            ease: reduceMotion ? "power1.out" : "power3.out",
+            stagger,
+            clearProps: "willChange"
+          });
+        }
+      });
     };
 
     const closestSectionIndex = () => {

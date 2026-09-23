@@ -333,6 +333,10 @@ h1 {
   display: inline;
 }
 
+.fold-text-word {
+  display: inline-block;
+}
+
 .fold-text-segment {
   display: inline-block;
   perspective: 700px;
@@ -353,43 +357,9 @@ h1 {
   border-radius: 0.08em;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.22) 42%, rgba(255, 255, 255, 0.26) 100%);
   content: "";
-  opacity: 0;
+  opacity: var(--fold-crease, 0);
   pointer-events: none;
   mix-blend-mode: multiply;
-}
-
-.fold-text.is-folding .fold-text-piece {
-  animation: fold-text-unfold 650ms var(--ease-out) both;
-  animation-delay: calc(var(--fold-index) * 45ms);
-  transform-origin: 50% 0%;
-  will-change: transform, opacity;
-}
-
-.fold-text.is-folding .fold-text-piece::after {
-  animation: fold-text-crease 650ms var(--ease-out) both;
-  animation-delay: calc(var(--fold-index) * 45ms);
-}
-
-@keyframes fold-text-unfold {
-  from {
-    opacity: 0;
-    transform: rotateX(-92deg);
-  }
-
-  to {
-    opacity: 1;
-    transform: rotateX(0deg);
-  }
-}
-
-@keyframes fold-text-crease {
-  from {
-    opacity: 0.55;
-  }
-
-  to {
-    opacity: 0;
-  }
 }
 
 .hero-actions {
@@ -880,15 +850,12 @@ footer p {
     display: none;
   }
 
-  .fold-text.is-folding .fold-text-piece {
-    animation: fold-text-fade 200ms var(--ease-out) both;
-    animation-delay: 0ms;
-    transform: none;
+  .fold-text-piece {
+    transform: none !important;
   }
 
-  .fold-text.is-folding .fold-text-piece::after {
-    animation: none;
-    opacity: 0;
+  .fold-text-piece::after {
+    opacity: 0 !important;
   }
 
   .hero-copy,
@@ -901,15 +868,5 @@ footer p {
     opacity: 1 !important;
     transform: none !important;
     will-change: auto;
-  }
-}
-
-@keyframes fold-text-fade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
   }
 }
