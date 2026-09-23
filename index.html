@@ -184,9 +184,9 @@
             gsap.to(pieces, {
               opacity: 1,
               rotateX: 0,
-              duration: reduceMotion ? 0.22 : 0.65,
+              duration: reduceMotion ? 0.18 : 0.45,
               ease: reduceMotion ? "power1.out" : "power3.out",
-              stagger: reduceMotion ? 0.02 : 0.045,
+              stagger: { amount: reduceMotion ? 0.12 : 0.45 },
               clearProps: "willChange"
             });
           }
