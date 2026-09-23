@@ -70,10 +70,12 @@ footer {
   top: 0;
   z-index: 5;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   padding-block: 28px;
-  background: var(--paper);
+  padding-inline: max(24px, calc((100vw - 1180px) / 2));
+  background: #8ccce4;
 }
 
 .logo {
@@ -109,19 +111,36 @@ footer a:focus-visible {
 }
 
 .hero {
+  position: relative;
+  isolation: isolate;
   display: grid;
   width: 100vw;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
+  overflow: hidden;
   min-height: calc(100svh - 104px);
   margin-left: calc(50% - 50vw);
   padding-block: 80px 110px;
   padding-inline: max(24px, calc((100vw - 1180px) / 2));
   background-color: #8ccce4;
-  background-image: url("hero-bg.png");
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: cover;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 8px;
+  left: 0;
+  width: 200%;
+  height: clamp(130px, 12vw, 170px);
+  background-image: url("cloud-layer.png");
+  background-repeat: repeat-x;
+  background-position: left center;
+  background-size: 50% auto;
+  image-rendering: pixelated;
+  pointer-events: none;
+  will-change: transform;
+  animation: cloud-drift 90s linear infinite;
 }
 
 main > section,
@@ -131,7 +150,15 @@ footer {
 }
 
 .hero-copy {
+  position: relative;
+  z-index: 1;
   max-width: 1080px;
+}
+
+@keyframes cloud-drift {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 h1,
@@ -446,14 +473,20 @@ footer p {
   }
 
   .site-header {
+    width: 100%;
     padding-block: 20px;
+    padding-inline: 16px;
   }
 
   .hero {
     min-height: calc(100svh - 88px);
     padding-block: 70px 80px;
     padding-inline: 16px;
-    background-size: 100% auto;
+  }
+
+  .hero::before {
+    top: 12px;
+    height: 120px;
   }
 
   .section-heading,
@@ -541,5 +574,10 @@ footer p {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+  }
+
+  .hero::before {
+    animation: none;
+    will-change: auto;
   }
 }
