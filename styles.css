@@ -110,10 +110,18 @@ footer a:focus-visible {
 
 .hero {
   display: grid;
+  width: 100vw;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
   min-height: calc(100svh - 104px);
+  margin-left: calc(50% - 50vw);
   padding-block: 80px 110px;
+  padding-inline: max(24px, calc((100vw - 1180px) / 2));
+  background-color: #8ccce4;
+  background-image: url("hero-bg.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
 }
 
 main > section,
@@ -444,6 +452,8 @@ footer p {
   .hero {
     min-height: calc(100svh - 88px);
     padding-block: 70px 80px;
+    padding-inline: 16px;
+    background-size: 100% auto;
   }
 
   .section-heading,
