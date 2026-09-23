@@ -239,6 +239,12 @@ h1 span {
   border-top: 1px solid var(--line);
 }
 
+.work-section,
+.about-section {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto calc(100svh - 104px);
+}
+
 .section-heading {
   display: flex;
   align-items: end;
@@ -430,14 +436,18 @@ h1 span {
 }
 
 .contact-section {
+  --contact-padding-block: clamp(55px, 8vw, 100px);
+
   display: flex;
   min-height: calc(100svh - 104px - var(--footer-height));
   flex-direction: column;
   justify-content: center;
-  padding: clamp(55px, 8vw, 100px);
+  padding: var(--contact-padding-block);
   border-radius: 32px;
   background: var(--ink);
   color: var(--white);
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto calc(100svh - 104px - var(--footer-height) - var(--contact-padding-block) - var(--contact-padding-block));
 }
 
 .contact-section p {
@@ -465,6 +475,8 @@ footer {
   padding-block: 42px;
   color: var(--muted);
   font-size: 0.9rem;
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto calc(var(--footer-height) - 84px);
 }
 
 footer p {
@@ -578,11 +590,13 @@ footer p {
   .about-section {
     min-height: auto;
     padding-block: 90px;
+    contain-intrinsic-block-size: auto clamp(471px, calc(1163px - 91vw), 808px);
   }
 
   .work-section {
     min-height: auto;
     padding-block: 80px;
+    contain-intrinsic-block-size: auto clamp(1264px, calc(418px + 217vw), 2067px);
   }
 
   .work-section,
@@ -602,6 +616,7 @@ footer p {
   .contact-section {
     min-height: calc(100svh - 88px - var(--footer-height));
     border-radius: 24px;
+    contain-intrinsic-block-size: auto calc(100svh - 88px - var(--footer-height) - var(--contact-padding-block) - var(--contact-padding-block));
   }
 }
 
@@ -625,7 +640,9 @@ footer p {
   }
 
   .contact-section {
-    padding: 42px 24px;
+    --contact-padding-block: 42px;
+
+    padding: var(--contact-padding-block) 24px;
   }
 
   footer {
