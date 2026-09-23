@@ -77,6 +77,11 @@ footer {
   padding-block: 28px;
   padding-inline: max(24px, calc((100vw - 1180px) / 2));
   background: #8ccce4;
+  transition: background-color 180ms ease-out;
+}
+
+.site-header.is-over-content {
+  background-color: var(--paper);
 }
 
 .logo {

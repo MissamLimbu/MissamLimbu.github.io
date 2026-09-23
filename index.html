@@ -104,5 +104,27 @@
     <p>© 2026 Missam Limbu</p>
     <a href="#top">Back to top</a>
   </footer>
+
+  <script>
+    const header = document.querySelector(".site-header");
+    const hero = document.querySelector(".hero");
+    let headerUpdatePending = false;
+
+    const updateHeaderBackground = () => {
+      const heroHasClearedHeader = hero.getBoundingClientRect().bottom <= header.offsetHeight;
+      header.classList.toggle("is-over-content", heroHasClearedHeader);
+      headerUpdatePending = false;
+    };
+
+    const requestHeaderUpdate = () => {
+      if (headerUpdatePending) return;
+      headerUpdatePending = true;
+      requestAnimationFrame(updateHeaderBackground);
+    };
+
+    addEventListener("scroll", requestHeaderUpdate, { passive: true });
+    addEventListener("resize", requestHeaderUpdate);
+    updateHeaderBackground();
+  </script>
 </body>
 </html>
