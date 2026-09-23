@@ -117,10 +117,10 @@ footer a:focus-visible {
   width: 100vw;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  overflow: hidden;
+  overflow: clip;
   min-height: calc(100svh - 104px);
   margin-left: calc(50% - 50vw);
-  padding-block: 80px 110px;
+  padding-block: clamp(48px, 8vh, 80px) clamp(64px, 10vh, 110px);
   padding-inline: max(24px, calc((100vw - 1180px) / 2));
   background-color: #8ccce4;
 }
@@ -180,7 +180,7 @@ h3,
 h1 {
   max-width: 1080px;
   margin-bottom: 28px;
-  font-size: clamp(4rem, 8vw, 7.25rem);
+  font-size: clamp(4rem, min(8vw, 12vh), 7.25rem);
   line-height: 0.96;
   text-wrap: balance;
 }
@@ -227,8 +227,10 @@ h1 span {
 }
 
 .work-section {
-  min-height: 100svh;
-  padding-block: 110px;
+  display: flex;
+  min-height: calc(100svh - 104px);
+  flex-direction: column;
+  padding-block: clamp(64px, 8vh, 96px);
   border-top: 1px solid var(--line);
 }
 
@@ -237,7 +239,7 @@ h1 span {
   align-items: end;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 42px;
+  margin-bottom: clamp(24px, 3.5vh, 36px);
 }
 
 .section-heading h2,
@@ -254,12 +256,16 @@ h1 span {
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  container-type: inline-size;
 }
 
 .project-card:last-child {
-  grid-column: 1 / -1;
+  grid-column: auto;
 }
 
 .project-visual {
@@ -271,7 +277,7 @@ h1 span {
 }
 
 .project-card:last-child .project-visual {
-  aspect-ratio: 2.25;
+  aspect-ratio: 1.34;
 }
 
 .project-info {
@@ -324,7 +330,7 @@ h1 span {
   justify-content: center;
   padding: 12%;
   color: var(--ink);
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: clamp(2.6rem, 19cqi, 4.2rem);
   font-weight: 800;
   letter-spacing: 0.015em;
   line-height: 0.85;
@@ -341,9 +347,10 @@ h1 span {
 
 .visual-window {
   display: flex;
-  width: 68%;
-  aspect-ratio: 1.75;
+  width: calc(100% - 18px);
+  aspect-ratio: 1.34;
   flex-direction: column;
+  justify-self: start;
   place-items: initial;
   border: 2px solid var(--ink);
   border-radius: 16px;
@@ -385,9 +392,10 @@ h1 span {
 .about-section {
   display: grid;
   grid-template-columns: 0.65fr 1.8fr;
+  align-items: center;
   gap: 60px;
-  min-height: 100svh;
-  padding-block: 120px;
+  min-height: calc(100svh - 104px);
+  padding-block: clamp(56px, 7vh, 90px);
   border-top: 1px solid var(--line);
 }
 
@@ -456,6 +464,41 @@ footer p {
   margin-bottom: 0;
 }
 
+@keyframes section-scroll-fade {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+
+  18%,
+  82% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -26px, 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .hero-copy,
+  .section-heading,
+  .project-card,
+  .about-label,
+  .about-section > div,
+  .contact-section > * {
+    animation-name: section-scroll-fade;
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view(block);
+    animation-range: entry 0% exit 100%;
+    will-change: opacity, transform;
+  }
+}
+
 :focus-visible {
   outline: 3px solid var(--coral);
   outline-offset: 4px;
@@ -463,7 +506,8 @@ footer p {
 
 @media (max-width: 760px) {
   html {
-    scroll-padding-top: 88px;
+    scroll-padding-top: 0;
+    scroll-snap-type: none;
   }
 
   .site-header,
@@ -520,11 +564,28 @@ footer p {
   }
 
   .visual-window {
-    width: 78%;
+    width: calc(100% - 14px);
+    box-shadow: 14px 14px 0 var(--blue-dark);
   }
 
   .about-section {
+    min-height: auto;
     padding-block: 90px;
+  }
+
+  .work-section {
+    min-height: auto;
+    padding-block: 80px;
+  }
+
+  .work-section,
+  .about-section {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+
+  main > section {
+    scroll-margin-top: 88px;
   }
 
   .about-label {
@@ -578,6 +639,18 @@ footer p {
 
   .hero::before {
     animation: none;
+    will-change: auto;
+  }
+
+  .hero-copy,
+  .section-heading,
+  .project-card,
+  .about-label,
+  .about-section > div,
+  .contact-section > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
     will-change: auto;
   }
 }
