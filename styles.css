@@ -102,24 +102,6 @@ footer a:focus-visible {
   padding-block: 80px 110px;
 }
 
-.availability {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 32px;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.availability span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #2b9f68;
-  box-shadow: 0 0 0 5px rgba(43, 159, 104, 0.13);
-}
-
 h1,
 h2,
 h3,
